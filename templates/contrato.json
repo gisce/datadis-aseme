@@ -1,0 +1,27 @@
+{
+    "titular": {
+    "nif": "",
+    "nombre": "",
+    "apellido": "",
+    "email": ""
+},
+"contrato": {
+    "comercializadora": "",
+    "tensionConexion": "",
+    "tarifaAcceso": "",
+    "discriminacionHoraria": "",
+    "tipoPunto": 0,
+    "modoControlPotencia": 0,
+    "fechaInicioContrato": "",
+    "fechaFinContrato": ""
+},
+    "puntoSuministro": {
+    "cups": "",
+    "distribuidora": "",
+    "codigoPostal": "",
+    "provincia": "",
+    "municipio": "",
+    "direccion": ""
+},
+    "potenciasContratadas": []
+}
