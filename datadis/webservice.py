@@ -2,6 +2,7 @@
 import requests
 import logging
 import json
+from os import path
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
 HEADER={"Accept": "text/plain", "Content-Type": "application/json"}
@@ -11,6 +12,10 @@ class DatadisWebserviceController(object):
 
     def __init__(self):
         self.token = ""
+
+    @property
+    def templates(self):
+        return path.join(path.dirname(path.realpath(__file__)), 'templates/')
 
     @property
     def token(self):
@@ -72,7 +77,7 @@ class DatadisWebserviceController(object):
                 if isinstance(data['modoControlPotencia'], str):
                     control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
                     data.update({'modoControlPotencia': control_potencia})
-                with open('templates/contrato.json') as json_template:
+                with open(self.templates + 'contrato.json') as json_template:
                     template = json.load(json_template)
                 for key in data.keys():
                     if key in template['contrato']:
@@ -98,7 +103,7 @@ class DatadisWebserviceController(object):
 
     def maximas_potencia(self, data):
         # todo: get datetime from any measure and separe fecha y hora
-        with open('templates/maximaspotencia.json') as json_template:
+        with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
         return r.json()
