@@ -119,9 +119,12 @@ class DatadisWebserviceController(object):
         """
         if 'nif' in data and 'cups' in data:
             r = requests.delete(self.url_eliminar_contrato.format(**data), headers=HEADER)
-            return r.json()
+            if r.status_code == 200:
+                return r.json()
+            else:
+                raise Exception("No se ha podido eliminar el contrato: {}".format(r.status_code))
         else:
-            raise KeyError("nif y/o cups no especificados")
+            raise KeyError("nif y/o cups no especificados!")
 
     def maximas_potencia(self, data):
         """Publicar maximetros al sistema DATADIS.
