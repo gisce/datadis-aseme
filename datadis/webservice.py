@@ -13,7 +13,7 @@ logger = logging.getLogger('Datadis Webservice')
 class DatadisWebserviceController(object):
 
     def __init__(self):
-        self.token = ""
+        pass
 
     @property
     def templates(self):
@@ -22,14 +22,6 @@ class DatadisWebserviceController(object):
     @property
     def token(self):
         return 'Bearer ' + self.token
-
-    @token.setter
-    def token(self, value):
-        self.token = value
-
-    @token.deleter
-    def token(self):
-        del self.token
 
     @property
     def url_autenticar(self):
