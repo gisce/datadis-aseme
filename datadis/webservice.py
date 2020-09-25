@@ -165,3 +165,22 @@ class DatadisWebserviceController(object):
         else:
             raise Exception("No se ha podido bloquear el acceso al consumidor: {}".format(r.status_code))
 
+    def estado(self, data):
+        """Consultar el estado de una peticion enviada al sistema DATADIS.
+        Enviar un diccionario con las siguientes claves:
+        data: {
+            "guid": 'Codigo de la peticion,
+            "timestamp": "Fecha de la peticion"
+        }
+        """
+        data = {'nif': nif, 'bloqueado': 'true'}
+        r = requests.post(self.url_bloquear_consumidor(), headers=HEADER, json=json.dumps(data))
+        if r.status_code == 200:
+            resp_data = r.json()
+            if resp_data["erroresAcumulados"]:
+                raise Exception(resp_data["mensaje"])
+            return r.json()
+        elif r.status_code == 422:
+            raise Exception("Error en el formato de datos")
+        else:
+            raise Exception("No se ha podido bloquear el acceso al consumidor: {}".format(r.status_code))
