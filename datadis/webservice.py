@@ -47,6 +47,11 @@ class DatadisWebserviceController(object):
         return BASE_URL + '/estado/{timestamp}/{guid}'
 
     def autenticar(self, user, password):
+        """Autenticarse en el sistema DATADIS.
+        Enviar un diccionario con las claves requeridas indicadas a continuacion
+        user: Usuario
+        password: Clave
+        """
         user = str(user).zfill(4)
         r = requests.post(self.url_autenticar, headers=HEADER, json={'usuario': user, 'contraseña': password})
         if r.status_code == 200:
@@ -62,6 +67,27 @@ class DatadisWebserviceController(object):
             raise Exception(r.status_code)
 
     def contrato(self, data, method='POST'):
+        """Publicar contrato al sistema DATADIS.
+        Si el contrato ya existe en el sistema, se modificara
+        Enviar un diccionario con las claves requeridas indicadas a continuacion
+        data: {
+            "nif": "",
+            "nombre": "",
+            "comercializadora": "",
+            "tensionConexion": "",
+            "tarifaAcceso": "",
+            "discriminacionHoraria": "",
+            "tipoPunto": "",
+            "modoControlPotencia": "",
+            "fechaInicioContrato": "",
+            "cups": "",
+            "distribuidora": "",
+            "codigoPostal": "",
+            "provincia": "",
+            "municipio": ""
+        }
+        method: 'POST' por defecto, utilizar 'DELETE' para eliminar contrato
+        """
         if method.upper() == 'POST':
             data = adaptar_datos_contrato(data)
             validar_contrato(data)
@@ -83,6 +109,14 @@ class DatadisWebserviceController(object):
             return self.eliminar_contrato(data)
 
     def eliminar_contrato(self, data):
+        """Eliminar un contrato del sistema DATADIS.
+        El sistema borrara todos los contratos del mismo NIF y CUPS
+        Enviar un diccionario con las claves requeridas indicadas a continuacion
+        data: {
+            "nif": "",
+            "cups": ""
+        }
+        """
         if 'nif' in data and 'cups' in data:
             r = requests.delete(self.url_eliminar_contrato.format(**data), headers=HEADER)
             return r.json()
@@ -90,13 +124,24 @@ class DatadisWebserviceController(object):
             raise KeyError("nif y/o cups no especificados")
 
     def maximas_potencia(self, data):
-        # todo: get datetime from any measure and separe fecha y hora
+        """Publicar maximetros al sistema DATADIS.
+        Enviar un diccionario con las siguiente estructura:
+        data: {
+            "cups": CON 22 CARACTERES,
+            "fecha": AAAA-MM-DD HH:MM, si no se especifica la hora se utilizara 00:00,
+            "medida": kWh,
+        }
+        """
         with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
+        # todo: get datetime from any measure and separe fecha y hora
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
         return r.json()
 
     def bloquear_consumidor(self, nif):
+        """Bloquear el acceso a la informacion del sistema DATADIS a un consumidor.
+        nif: string indicando el NIF del consumidor
+        """
         data = {'nif': nif, 'bloqueado': 'true'}
         r = requests.post(self.url_bloquear_consumidor(), headers=HEADER, json=json.dumps(data))
         return r.json()
