@@ -1,0 +1,9 @@
+{
+    11: "No existe un contrato para el NIF {NIF} y CUPS {CUPS}"
+    12: "El CUPS {CUPS} ya está vinculado a otra distribuidora",
+    13: "El nuevo contrato se solapa en fechas con otro del mismo punto de suministro",
+    21: "No existe el punto de suministro {CUPS}",
+    22: "El CUPS {CUPS} ya está vinculado a otra distribuidora"
+    31: "No existe el consumidor con NIF {NIF}",
+    32: "El consumidor con NIF { NIF } no es valido",
+}
