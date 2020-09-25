@@ -3,6 +3,8 @@ import requests
 import logging
 import json
 from os import path
+from datadis.validators import validar_contrato
+from datadis.adaptors import adaptar_datos_contrato
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
 HEADER={"Accept": "text/plain", "Content-Type": "application/json"}
@@ -65,33 +67,27 @@ class DatadisWebserviceController(object):
             HEADER['Authorization'] = self.token
             return resp_data
         else:
-            return r.status_code
+            raise Exception(r.status_code)
 
     def contrato(self, data, method='POST'):
-        if upper(method) == 'POST':
-            if self.validar_contrato(data):
-                data.update({
-                    'comercialitzadora': str(data['comercialitzadora'].zfill(4)),
-                    'distribuidora': str(data['distribuidora'].zfill(4))
-                })
-                if isinstance(data['modoControlPotencia'], str):
-                    control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
-                    data.update({'modoControlPotencia': control_potencia})
-                with open(self.templates + 'contrato.json') as json_template:
-                    template = json.load(json_template)
-                for key in data.keys():
-                    if key in template['contrato']:
-                        template['contrato'].update({key: data[key]})
-                    if key in template['puntoSuministro']:
-                        template['puntoSuministro'].update({key: data[key]})
-                    if key in template['titular']:
-                        template['titular'].update({key: data[key]})
-                request_link = BASE_URL + '/autenticar'
-                r = requests.post(request_link, headers=HEADER, json=template)
-                return r.json()
-            else:
-                return 'error'
-        if upper(method) == 'DELETE':
+        if method.upper() == 'POST':
+            data = adaptar_datos_contrato(data)
+            validar_contrato(data)
+            if isinstance(data['modoControlPotencia'], str):
+                control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
+                data.update({'modoControlPotencia': control_potencia})
+            with open(self.templates + 'contrato.json') as json_template:
+                template = json.load(json_template)
+            for key in data.keys():
+                if key in template['contrato']:
+                    template['contrato'].update({key: data[key]})
+                if key in template['puntoSuministro']:
+                    template['puntoSuministro'].update({key: data[key]})
+                if key in template['titular']:
+                    template['titular'].update({key: data[key]})
+            r = requests.post(self.url_contrato, headers=HEADER, json=template)
+            return r.json()
+        if method.upper() == 'DELETE':
             return self.eliminar_contrato(data)
 
     def eliminar_contrato(self, data):
@@ -99,7 +95,7 @@ class DatadisWebserviceController(object):
             r = requests.delete(self.url_eliminar_contrato.format(**data), headers=HEADER)
             return r.json()
         else:
-            return 'error'
+            raise KeyError("nif y/o cups no especificados")
 
     def maximas_potencia(self, data):
         # todo: get datetime from any measure and separe fecha y hora
@@ -113,17 +109,3 @@ class DatadisWebserviceController(object):
         r = requests.post(self.url_bloquear_consumidor(), headers=HEADER, json=json.dumps(data))
         return r.json()
 
-    @staticmethod
-    def validar_contrato(data):
-        if not isinstance(data, dict):
-            return False
-        required_keys = [
-            'comercialitzadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto',
-            'modoControlPotencia', 'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal',
-            'provincia', 'municipio'
-        ]
-        for key in required_keys:
-            if key not in data:
-                logger.error('Required Key {} not found!'.format(key))
-                raise KeyError
-        return True
