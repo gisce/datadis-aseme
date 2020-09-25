@@ -139,7 +139,10 @@ class DatadisWebserviceController(object):
             template = json.load(json_template)
         # todo: get datetime from any measure and separe fecha y hora
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
-        return r.json()
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise Exception("No se han podido cargar el maximetro: {}".format(r.status_code))
 
     def bloquear_consumidor(self, nif):
         """Bloquear el acceso a la informacion del sistema DATADIS a un consumidor.
@@ -147,5 +150,8 @@ class DatadisWebserviceController(object):
         """
         data = {'nif': nif, 'bloqueado': 'true'}
         r = requests.post(self.url_bloquear_consumidor(), headers=HEADER, json=json.dumps(data))
-        return r.json()
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise Exception("No se ha podido bloquear el acceso al consumidor: {}".format(r.status_code))
 

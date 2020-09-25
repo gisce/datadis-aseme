@@ -5,7 +5,7 @@ CODIGOS_DH = ['G0', 'E3', 'E2', 'E1']
 
 def validar_contrato(data):
     if not isinstance(data, dict):
-        return Exception("El formato de datos debe ser un diccionario")
+        raise Exception("El formato de datos debe ser un diccionario")
 
     validar_provincia()
     validar_municipio()
