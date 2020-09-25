@@ -5,6 +5,7 @@ import json
 from os import path
 from datadis.validators import validar_contrato
 from datadis.adaptors import adaptar_datos_contrato
+from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
 HEADER={"Accept": "text/plain", "Content-Type": "application/json"}
@@ -138,6 +139,15 @@ class DatadisWebserviceController(object):
         with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
         # todo: get datetime from any measure and separe fecha y hora
+        ts = datetime.strptime('%Y-%m-%d %H:%M')
+        fecha = ts.strftime('%Y-%m-%d')
+        hora = ts.strftime('%H:%M')
+        medida = round(float(data['medida']), 3)
+        data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
+        template['cups'] = data['cups']
+        template['registros']['fecha'] = data['fecha']
+        template['registros']['hora'] = data['hora']
+        template['registros']['medida'] = data['medida']
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
         if r.status_code == 200:
             return r.json()
