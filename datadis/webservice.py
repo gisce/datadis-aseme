@@ -8,7 +8,9 @@ from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
-HEADER={"Accept": "text/plain", "Content-Type": "application/json"}
+HEADER = {
+    'Content-Type': 'application/json', 'Accept-Charset': 'utf-8', 'charset': 'utf-8'
+}
 logger = logging.getLogger('Datadis Webservice')
 
 class DatadisWebserviceController(object):
