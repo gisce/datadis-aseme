@@ -7,24 +7,28 @@ def validar_contrato(data):
     if not isinstance(data, dict):
         raise Exception("El formato de datos debe ser un diccionario")
 
-    validar_provincia()
-    validar_municipio()
+    validar_provincia(data['provincia'])
+    validar_municipio(data['municipio'])
     validar_cups(data['cups'])
     validar_tension(data['tensionConexion'])
     validar_tarifa(data['tarifaAcceso'])
     validar_dh(data['discriminacionHoraria'])
     validar_tipo_punto(data['tipoPunto'])
-    validar_control_potencia(data['tipoPunto'])
+    validar_control_potencia(data['modoControlPotencia'])
     validar_nif(data['nif'])
 
-def validar_municipio(municipio):
-    pass
+def validar_provincia(provincia):
+    provincias, municipios = read_provincias_municipios()
+    if provincia not in provincias:
+        raise Exception('El codigo provincia {} no existe en el INE'.format(provincia))
 
-def validar_provincia(poblacion):
-    pass
+def validar_municipio(municipio):
+    provincias, municipios = read_provincias_municipios()
+    if municipio not in municipios:
+        raise Exception('El codigo municipio {} no existe en el INE'.format(municipio))
 
 def validar_cups(cups):
-    if len(data['cups']) != 22:
+    if len(cups) != 22:
         raise Exception('El cups debe tener 22 caracteres')
 
 def validar_tension(tension):
@@ -47,10 +51,24 @@ def validar_dh(dh):
 
 def validar_tipo_punto(tipo_punto):
     if int(tipo_punto) > 5 or int(tipo_punto) < 1:
-        raise Exception("Codito tipo de punto {} incorrecto -> 1, 2, 3, 4, 5".format(tipo_punto))
+        raise Exception("Codigo tipo de punto {} incorrecto -> 1, 2, 3, 4, 5".format(tipo_punto))
 
-def validar_control_potencia():
-    pass
+def validar_control_potencia(control_potencia):
+    if not isinstance(control_potencia, int):
+        raise TypeError("Modo control potencia {} incorrecto".format(control_potencia))
+    if control_potencia not in (1, 2):
+        raise Exception("Modo control potencia {} incorrecto -> 1: Maximetro, 2: ICP")
 
-def validar_nif():
-    pass
+def validar_nif(nif):
+    if len(nif) != 9:
+        raise Exception("Longitud NIF/CIF {} incorrecto".format(nif))
+
+def read_provincias_municipios():
+    import csv
+    municipios = []
+    provincias = []
+    with open('data/20codmun.csv') as csvfile:
+        for CODAUTO, CPRO, CMUN, DC, NOMBRE in csv.reader(csvfile, delimiter=';'):
+            provincias.append(CPRO)
+            municipios.append(CMUN)
+    return provincias, municipios

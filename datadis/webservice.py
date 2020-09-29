@@ -4,7 +4,7 @@ import logging
 import json
 from os import path
 from datadis.validators import validar_contrato
-from datadis.adaptors import adaptar_datos_contrato
+from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
@@ -36,6 +36,7 @@ class DatadisWebserviceController(object):
     def url_eliminar_contrato(self):
         return BASE_URL + '/contrato/{nif}/{cups}'
 
+    @property
     def url_bloquear_consumidor(self):
         return BASE_URL + '/consumidor/bloquear'
 
@@ -92,9 +93,7 @@ class DatadisWebserviceController(object):
         if method.upper() == 'POST':
             data = adaptar_datos_contrato(data)
             validar_contrato(data)
-            if isinstance(data['modoControlPotencia'], str):
-                control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
-                data.update({'modoControlPotencia': control_potencia})
+
             with open(self.templates + 'contrato.json') as json_template:
                 template = json.load(json_template)
             for key in data.keys():
@@ -138,16 +137,11 @@ class DatadisWebserviceController(object):
         """
         with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
-        # todo: get datetime from any measure and separe fecha y hora
-        ts = datetime.strptime('%Y-%m-%d %H:%M')
-        fecha = ts.strftime('%Y-%m-%d')
-        hora = ts.strftime('%H:%M')
-        medida = round(float(data['medida']), 3)
-        data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
+        data = adaptar_maximas_potencia(data)
         template['cups'] = data['cups']
-        template['registros']['fecha'] = data['fecha']
-        template['registros']['hora'] = data['hora']
-        template['registros']['medida'] = data['medida']
+        template['registros'][0]['fecha'] = data['fecha']
+        template['registros'][0]['hora'] = data['hora']
+        template['registros'][0]['medida'] = data['medida']
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
         if r.status_code == 200:
             return r.json()
