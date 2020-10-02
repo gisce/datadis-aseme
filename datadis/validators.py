@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from os import path
+
 CODIGOS_TARIFA = ['30', '31', '62', '63', '64', '65', '21', '2A', '6A']
 CODIGOS_TENSION = ['E0', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6']
 CODIGOS_DH = ['G0', 'E3', 'E2', 'E1']
@@ -67,7 +69,10 @@ def read_provincias_municipios():
     import csv
     municipios = []
     provincias = []
-    with open('data/20codmun.csv') as csvfile:
+    abs_route_fname = path.join(
+        path.dirname(path.realpath(__file__)), 'data/20codmun.csv'
+    )
+    with open(abs_route_fname) as csvfile:
         for CODAUTO, CPRO, CMUN, DC, NOMBRE in csv.reader(csvfile, delimiter=';'):
             provincias.append(CPRO)
             municipios.append(CMUN)
