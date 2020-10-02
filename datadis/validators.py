@@ -62,7 +62,7 @@ def validar_control_potencia(control_potencia):
         raise Exception("Modo control potencia {} incorrecto -> 1: Maximetro, 2: ICP")
 
 def validar_nif(nif):
-    if len(nif) != 9:
+    if len(nif) < 9:
         raise Exception("Longitud NIF/CIF {} incorrecto".format(nif))
 
 def read_provincias_municipios():
