@@ -91,6 +91,7 @@ class DatadisWebserviceController(object):
             "municipio": ""
         }
         method: 'POST' por defecto, utilizar 'DELETE' para eliminar contrato
+        return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         if method.upper() == 'POST':
             data = adaptar_datos_contrato(data)
@@ -136,6 +137,7 @@ class DatadisWebserviceController(object):
             "fecha": AAAA-MM-DD HH:MM, si no se especifica la hora se utilizara 00:00,
             "medida": kWh,
         }
+        return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
@@ -168,15 +170,15 @@ class DatadisWebserviceController(object):
             "guid": 'Codigo de la peticion,
             "timestamp": "Fecha de la peticion"
         }
+        return: []
         """
-        data = {'nif': nif, 'bloqueado': 'true'}
-        r = requests.post(self.url_bloquear_consumidor(), headers=HEADER, json=json.dumps(data))
+        r = requests.post(self.url_estado.format(**data), headers=HEADER)
         if r.status_code == 200:
             resp_data = r.json()
             if resp_data["erroresAcumulados"]:
-                raise Exception(resp_data["mensaje"])
-            return r.json()
+                return resp_data["erroresAcumulados"]
+            return resp_data["ultimaPeticionProcesada"]
         elif r.status_code == 422:
-            raise Exception("Error en el formato de datos")
+            raise Exception("Error en el formato de datos de la peticion")
         else:
-            raise Exception("No se ha podido bloquear el acceso al consumidor: {}".format(r.status_code))
+            raise Exception("No se ha podido consultar el estado de la peticion: {}".format(r.status_code))
