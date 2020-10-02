@@ -49,3 +49,7 @@ def adaptar_maximas_potencia(data):
     medida = "%.3f" % round(data['medida'], 3)
     data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
     return data
+
+def adaptar_estado(data):
+    if isinstance(data['timestamp'], str):
+        data['timestamp'] = int(data['timestamp'])

@@ -68,7 +68,7 @@ class DatadisWebserviceController(object):
             HEADER['Authorization'] = self.token
             return resp_data
         else:
-            raise Exception(r.status_code)
+            raise Exception(r.content)
 
     def contrato(self, data, method='POST'):
         """Publicar contrato al sistema DATADIS.
@@ -107,7 +107,12 @@ class DatadisWebserviceController(object):
                 if key in template['titular']:
                     template['titular'].update({key: data[key]})
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
-            return r.json()
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 422:
+                raise Exception("No se ha podido publicar el contrato: \n{}".format(r.content))
+            else:
+                raise Exception("No se ha podido publicar el contrato {}".format(r.status_code))
         if method.upper() == 'DELETE':
             return self.eliminar_contrato(data)
 
@@ -172,6 +177,7 @@ class DatadisWebserviceController(object):
         }
         return: []
         """
+        data = adaptar_estado(data)
         r = requests.post(self.url_estado.format(**data), headers=HEADER)
         if r.status_code == 200:
             resp_data = r.json()
@@ -179,6 +185,6 @@ class DatadisWebserviceController(object):
                 return resp_data["erroresAcumulados"]
             return resp_data["ultimaPeticionProcesada"]
         elif r.status_code == 422:
-            raise Exception("Error en el formato de datos de la peticion")
+            raise Exception("Error en el formato de datos de la peticion: \n{}".format(r.content))
         else:
             raise Exception("No se ha podido consultar el estado de la peticion: {}".format(r.status_code))
