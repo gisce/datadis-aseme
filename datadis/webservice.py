@@ -105,6 +105,8 @@ class DatadisWebserviceController(object):
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
             if r.status_code == 200:
                 return r.json()
+            elif r.status_code == 202:
+                return r.json()
             elif r.status_code == 422:
                 raise Exception("No se ha podido publicar el contrato: \n{}".format(r.content))
             else:
