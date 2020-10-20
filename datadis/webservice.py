@@ -23,10 +23,6 @@ class DatadisWebserviceController(object):
         return path.join(path.dirname(path.realpath(__file__)), 'templates/')
 
     @property
-    def token(self):
-        return 'Bearer ' + self.token
-
-    @property
     def url_autenticar(self):
         return BASE_URL + '/autenticar'
 
@@ -63,7 +59,7 @@ class DatadisWebserviceController(object):
             api_token = resp_data.get('token', '')
             username = resp_data.get('usuario', '')
             logger.info('User {} is now connected'.format(username))
-            self.token = api_token
+            self.token = 'Bearer ' + api_token
             self.user = username
             HEADER['Authorization'] = self.token
             return resp_data
