@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 REQUIRED_CONTRATO_KEYS = [
-    'comercialitzadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia', 
+    'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
     'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
@@ -14,7 +14,7 @@ def adaptar_datos_contrato(data):
     if len(str(data['municipio'])) != 3:
         data['municipio'] = str(data['municipio'])[-3:]
     data.update({
-        'comercialitzadora': str(data['comercialitzadora'].zfill(4)),
+        'comercializadora': str(data['comercializadora'].zfill(4)),
         'distribuidora': str(data['distribuidora'].zfill(4)),
         'tarifaAcceso': str(data['tarifaAcceso'].upper()),
         'tensionConexion': str(data['tensionConexion'].upper()),
