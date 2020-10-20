@@ -11,7 +11,8 @@ def adaptar_datos_contrato(data):
     for key in REQUIRED_CONTRATO_KEYS:
         if key not in data:
             raise KeyError("Clave requerida {} no encontrada!".format(key))
-
+    if len(str(data['municipio'])) != 3:
+        data['municipio'] = str(data['municipio'])[-3:]
     data.update({
         'comercialitzadora': str(data['comercialitzadora'].zfill(4)),
         'distribuidora': str(data['distribuidora'].zfill(4)),
