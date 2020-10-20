@@ -25,7 +25,7 @@ def adaptar_datos_contrato(data):
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
     })
-    if isinstance(data['modoControlPotencia'], str):
+    if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
         data.update({'modoControlPotencia': control_potencia})
 
