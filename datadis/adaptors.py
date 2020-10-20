@@ -52,5 +52,5 @@ def adaptar_maximas_potencia(data):
     return data
 
 def adaptar_estado(data):
-    if isinstance(data['timestamp'], str):
+    if not isinstance(data['timestamp'], int):
         data['timestamp'] = int(data['timestamp'])
