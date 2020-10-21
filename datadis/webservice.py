@@ -4,7 +4,7 @@ import logging
 import json
 from os import path
 from datadis.validators import validar_contrato
-from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia
+from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia, adaptar_estado
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
@@ -176,12 +176,12 @@ class DatadisWebserviceController(object):
         return: []
         """
         data = adaptar_estado(data)
-        r = requests.post(self.url_estado.format(**data), headers=HEADER)
+        r = requests.get(self.url_estado.format(**data), headers=HEADER)
         if r.status_code == 200:
             resp_data = r.json()
             if resp_data["erroresAcumulados"]:
-                return resp_data["erroresAcumulados"]
-            return resp_data["ultimaPeticionProcesada"]
+                raise Exception("Errores Acumulados: \n{}".format(resp_data))
+            return resp_data
         elif r.status_code == 422:
             raise Exception("Error en el formato de datos de la peticion: \n{}".format(r.content))
         else:
