@@ -18,6 +18,8 @@ def validar_contrato(data):
     validar_tipo_punto(data['tipoPunto'])
     validar_control_potencia(data['modoControlPotencia'])
     validar_nif(data['nif'])
+    if 'potenciasContratadas' in data:
+        validar_potencias_contratadas(data['potenciasContratadas'])
 
 def validar_provincia(provincia):
     provincias, municipios = read_provincias_municipios()
@@ -64,6 +66,13 @@ def validar_control_potencia(control_potencia):
 def validar_nif(nif):
     if len(nif) < 9:
         raise Exception("Longitud NIF/CIF {} incorrecto".format(nif))
+
+def validar_potencias_contratadas(potencias_contratadas):
+    if not isinstance(potencias_contratadas, (list, tuple)):
+        raise Exception("Las potencias contratadas deben enviarse en formato lista")
+    for pot in potencias_contratadas:
+        if not isinstance(pot, float):
+            raise Exception("Las potencias contratadas deben enviarse en kWh y en decimales")
 
 def read_provincias_municipios():
     import csv
