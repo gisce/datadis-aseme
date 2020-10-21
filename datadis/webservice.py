@@ -85,6 +85,7 @@ class DatadisWebserviceController(object):
             "codigoPostal": "",
             "provincia": "",
             "municipio": ""
+            "potenciasContratadas": Opcional: lista de potencias ordenadas por periodo o dicionario, o string P1: x P2: y
         }
         method: 'POST' por defecto, utilizar 'DELETE' para eliminar contrato
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
@@ -102,6 +103,8 @@ class DatadisWebserviceController(object):
                     template['puntoSuministro'].update({key: data[key]})
                 if key in template['titular']:
                     template['titular'].update({key: data[key]})
+                if key == 'potenciasContratadas':
+                    template['potenciasContratadas'].update({key: data[key]})
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
             if r.status_code == 200:
                 return r.json()

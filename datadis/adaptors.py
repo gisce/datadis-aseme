@@ -28,7 +28,21 @@ def adaptar_datos_contrato(data):
     if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
         data.update({'modoControlPotencia': control_potencia})
-
+    if 'potenciasContratadas' in data:
+        if isinstance(data['potenciasContratadas'], (dict)):
+            potencias = []
+            for val in data['potenciasContratadas'].values():
+                potencias.append(float(val))
+            data['potenciasContratadas'] = potencias
+        elif not isinstance(data['potenciasContratadas'], (list, dict)):
+            potencias = data['potenciasContratadas']
+            potencias_keys = re.findall('P\d', potencias)
+            for pot_key in potencias_keys:
+                potencias = potencias.replace('{}: '.format(pot_key), '')
+            potencias = potencias.split(' ')
+            for i, pot in potencias:
+                potencias[i] = float(potencias[i])
+            data['potenciasContratadas'] = potencias
     return data
 
 def adaptar_maximas_potencia(data):
