@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from re import findall
+
 REQUIRED_CONTRATO_KEYS = [
     'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
     'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio'
@@ -36,11 +38,11 @@ def adaptar_datos_contrato(data):
             data['potenciasContratadas'] = potencias
         elif not isinstance(data['potenciasContratadas'], (list, dict)):
             potencias = data['potenciasContratadas']
-            potencias_keys = re.findall('P\d', potencias)
+            potencias_keys = findall('P\d', potencias)
             for pot_key in potencias_keys:
                 potencias = potencias.replace('{}: '.format(pot_key), '')
             potencias = potencias.split(' ')
-            for i, pot in potencias:
+            for i, pot in enumerate(potencias):
                 potencias[i] = float(potencias[i])
             data['potenciasContratadas'] = potencias
     return data
