@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from re import findall
+from datetime import datetime
+
 REQUIRED_CONTRATO_KEYS = [
-    'comercialitzadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia', 
+    'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
     'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
@@ -11,9 +14,10 @@ def adaptar_datos_contrato(data):
     for key in REQUIRED_CONTRATO_KEYS:
         if key not in data:
             raise KeyError("Clave requerida {} no encontrada!".format(key))
-
+    if len(str(data['municipio'])) != 3:
+        data['municipio'] = str(data['municipio'])[-3:]
     data.update({
-        'comercialitzadora': str(data['comercialitzadora'].zfill(4)),
+        'comercializadora': str(data['comercializadora'].zfill(4)),
         'distribuidora': str(data['distribuidora'].zfill(4)),
         'tarifaAcceso': str(data['tarifaAcceso'].upper()),
         'tensionConexion': str(data['tensionConexion'].upper()),
@@ -24,10 +28,24 @@ def adaptar_datos_contrato(data):
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
     })
-    if isinstance(data['modoControlPotencia'], str):
+    if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
         data.update({'modoControlPotencia': control_potencia})
-
+    if 'potenciasContratadas' in data:
+        if isinstance(data['potenciasContratadas'], (dict)):
+            potencias = []
+            for val in data['potenciasContratadas'].values():
+                potencias.append(float(val))
+            data['potenciasContratadas'] = potencias
+        elif not isinstance(data['potenciasContratadas'], (list, dict)):
+            potencias = data['potenciasContratadas']
+            potencias_keys = findall('P\d', potencias)
+            for pot_key in potencias_keys:
+                potencias = potencias.replace('{}: '.format(pot_key), '')
+            potencias = potencias.split(' ')
+            for i, pot in enumerate(potencias):
+                potencias[i] = float(potencias[i])
+            data['potenciasContratadas'] = potencias
     return data
 
 def adaptar_maximas_potencia(data):
@@ -38,14 +56,23 @@ def adaptar_maximas_potencia(data):
     hour_mask = "%H:%M"
     date_mask = "%Y-%m-%d"
     try:
-        ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
+        ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask + ":%S")
     except ValueError, TypeError:
         try:
-            ts = datetime.strptime(data['fecha'], date_mask)
-        except:
-            raise Exception("Formato {} fecha incorrecto -> AAAA/mm/dd o AAAA/mm/dd HH:MM".format(data['fecha']))
+            ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
+        except ValueError, TypeError:
+            try:
+                ts = datetime.strptime(data['fecha'], date_mask)
+            except:
+                raise Exception("Formato {} fecha incorrecto -> AAAA/mm/dd o AAAA/mm/dd HH:MM o AAAA/mm/dd HH:MM:SS".format(data['fecha']))
     fecha = ts.strftime(date_mask)
     hora = ts.strftime(hour_mask)
     medida = "%.3f" % round(data['medida'], 3)
+    medida = float(medida)
     data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
+    return data
+
+def adaptar_estado(data):
+    if not isinstance(data['timestamp'], int):
+        data['timestamp'] = int(data['timestamp'])
     return data

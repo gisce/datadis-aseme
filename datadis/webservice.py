@@ -4,7 +4,7 @@ import logging
 import json
 from os import path
 from datadis.validators import validar_contrato
-from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia
+from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia, adaptar_estado
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
@@ -21,10 +21,6 @@ class DatadisWebserviceController(object):
     @property
     def templates(self):
         return path.join(path.dirname(path.realpath(__file__)), 'templates/')
-
-    @property
-    def token(self):
-        return 'Bearer ' + self.token
 
     @property
     def url_autenticar(self):
@@ -63,12 +59,12 @@ class DatadisWebserviceController(object):
             api_token = resp_data.get('token', '')
             username = resp_data.get('usuario', '')
             logger.info('User {} is now connected'.format(username))
-            self.token = api_token
+            self.token = 'Bearer ' + api_token
             self.user = username
             HEADER['Authorization'] = self.token
             return resp_data
         else:
-            raise Exception(r.status_code)
+            raise Exception(r.content)
 
     def contrato(self, data, method='POST'):
         """Publicar contrato al sistema DATADIS.
@@ -89,6 +85,7 @@ class DatadisWebserviceController(object):
             "codigoPostal": "",
             "provincia": "",
             "municipio": ""
+            "potenciasContratadas": Opcional: lista de potencias ordenadas por periodo o dicionario, o string P1: x P2: y
         }
         method: 'POST' por defecto, utilizar 'DELETE' para eliminar contrato
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
@@ -106,8 +103,17 @@ class DatadisWebserviceController(object):
                     template['puntoSuministro'].update({key: data[key]})
                 if key in template['titular']:
                     template['titular'].update({key: data[key]})
+                if key == 'potenciasContratadas':
+                    template['potenciasContratadas'].update({key: data[key]})
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
-            return r.json()
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 202:
+                return r.json()
+            elif r.status_code == 422:
+                raise Exception("No se ha podido publicar el contrato: \n{}".format(r.content))
+            else:
+                raise Exception("No se ha podido publicar el contrato {}".format(r.status_code))
         if method.upper() == 'DELETE':
             return self.eliminar_contrato(data)
 
@@ -146,11 +152,15 @@ class DatadisWebserviceController(object):
         template['registros'][0]['fecha'] = data['fecha']
         template['registros'][0]['hora'] = data['hora']
         template['registros'][0]['medida'] = data['medida']
-        r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
+        r = requests.post(self.url_maximas_potencia, headers=HEADER, json=template)
         if r.status_code == 200:
             return r.json()
+        elif r.status_code == 202:
+            return r.json()
+        elif r.status_code == 422:
+            raise Exception("No se han podido cargar los maximetros: \n{}".format(r.content))
         else:
-            raise Exception("No se han podido cargar el maximetro: {}".format(r.status_code))
+            raise Exception("No se han podido cargar los maximetros: {}".format(r.status_code))
 
     def bloquear_consumidor(self, nif):
         """Bloquear el acceso a la informacion del sistema DATADIS a un consumidor.
@@ -172,13 +182,14 @@ class DatadisWebserviceController(object):
         }
         return: []
         """
-        r = requests.post(self.url_estado.format(**data), headers=HEADER)
+        data = adaptar_estado(data)
+        r = requests.get(self.url_estado.format(**data), headers=HEADER)
         if r.status_code == 200:
             resp_data = r.json()
             if resp_data["erroresAcumulados"]:
-                return resp_data["erroresAcumulados"]
-            return resp_data["ultimaPeticionProcesada"]
+                raise Exception("Errores Acumulados: \n{}".format(resp_data))
+            return resp_data
         elif r.status_code == 422:
-            raise Exception("Error en el formato de datos de la peticion")
+            raise Exception("Error en el formato de datos de la peticion: \n{}".format(r.content))
         else:
             raise Exception("No se ha podido consultar el estado de la peticion: {}".format(r.status_code))
