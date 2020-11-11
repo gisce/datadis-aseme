@@ -56,12 +56,15 @@ def adaptar_maximas_potencia(data):
     hour_mask = "%H:%M"
     date_mask = "%Y-%m-%d"
     try:
-        ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
+        ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask + ":%S")
     except ValueError, TypeError:
         try:
-            ts = datetime.strptime(data['fecha'], date_mask)
-        except:
-            raise Exception("Formato {} fecha incorrecto -> AAAA/mm/dd o AAAA/mm/dd HH:MM".format(data['fecha']))
+            ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
+        except ValueError, TypeError:
+            try:
+                ts = datetime.strptime(data['fecha'], date_mask)
+            except:
+                raise Exception("Formato {} fecha incorrecto -> AAAA/mm/dd o AAAA/mm/dd HH:MM o AAAA/mm/dd HH:MM:SS".format(data['fecha']))
     fecha = ts.strftime(date_mask)
     hora = ts.strftime(hour_mask)
     medida = "%.3f" % round(data['medida'], 3)
