@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from re import findall
+from datetime import datetime
 
 REQUIRED_CONTRATO_KEYS = [
     'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
