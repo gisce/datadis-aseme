@@ -68,6 +68,7 @@ def adaptar_maximas_potencia(data):
     fecha = ts.strftime(date_mask)
     hora = ts.strftime(hour_mask)
     medida = "%.3f" % round(data['medida'], 3)
+    medida = float(medida)
     data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
     return data
 

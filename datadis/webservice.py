@@ -152,11 +152,15 @@ class DatadisWebserviceController(object):
         template['registros'][0]['fecha'] = data['fecha']
         template['registros'][0]['hora'] = data['hora']
         template['registros'][0]['medida'] = data['medida']
-        r = requests.post(self.url_maximas_potencia, headers=HEADER, json=json.dumps(data))
+        r = requests.post(self.url_maximas_potencia, headers=HEADER, json=template)
         if r.status_code == 200:
             return r.json()
+        elif r.status_code == 202:
+            return r.json()
+        elif r.status_code == 422:
+            raise Exception("No se han podido cargar los maximetros: \n{}".format(r.content))
         else:
-            raise Exception("No se han podido cargar el maximetro: {}".format(r.status_code))
+            raise Exception("No se han podido cargar los maximetros: {}".format(r.status_code))
 
     def bloquear_consumidor(self, nif):
         """Bloquear el acceso a la informacion del sistema DATADIS a un consumidor.
