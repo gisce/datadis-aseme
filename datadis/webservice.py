@@ -104,7 +104,7 @@ class DatadisWebserviceController(object):
                 if key in template['titular']:
                     template['titular'].update({key: data[key]})
                 if key == 'potenciasContratadas':
-                    template['potenciasContratadas'].update({key: data[key]})
+                    template['potenciasContratadas'] = data[key]
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
             if r.status_code == 200:
                 return r.json()
