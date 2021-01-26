@@ -4,7 +4,7 @@ from datetime import datetime
 
 REQUIRED_CONTRATO_KEYS = [
     'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
-    'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio'
+    'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio', 'CNAE'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
     'cups', 'medida', 'fecha'
@@ -27,6 +27,7 @@ def adaptar_datos_contrato(data):
         'codigoPostal': str(data['codigoPostal']).zfill(5),
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
+        'CNAE': str(data['CNAE']).zfill(4)
     })
     if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2

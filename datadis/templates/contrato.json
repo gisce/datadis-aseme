@@ -13,7 +13,8 @@
     "tipoPunto": 0,
     "modoControlPotencia": 0,
     "fechaInicioContrato": "",
-    "fechaFinContrato": ""
+    "fechaFinContrato": "",
+    "CNAE": ""
 },
     "puntoSuministro": {
     "cups": "",
