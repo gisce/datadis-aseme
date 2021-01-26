@@ -16,6 +16,10 @@ def adaptar_datos_contrato(data):
             raise KeyError("Clave requerida {} no encontrada!".format(key))
     if len(str(data['municipio'])) != 3:
         data['municipio'] = str(data['municipio'])[-3:]
+    if not data['CNAE']:
+        data.update({'CNAE': ""})
+    else:
+        data.update({'CNAE': str(data['CNAE']).zfill(4)})
     data.update({
         'comercializadora': str(data['comercializadora'].zfill(4)),
         'distribuidora': str(data['distribuidora'].zfill(4)),
@@ -27,7 +31,6 @@ def adaptar_datos_contrato(data):
         'codigoPostal': str(data['codigoPostal']).zfill(5),
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
-        'CNAE': str(data['CNAE']).zfill(4)
     })
     if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
