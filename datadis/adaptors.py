@@ -4,7 +4,7 @@ from datetime import datetime
 
 REQUIRED_CONTRATO_KEYS = [
     'comercializadora', 'tensionConexion', 'tarifaAcceso', 'discriminacionHoraria', 'tipoPunto', 'modoControlPotencia',
-    'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio'
+    'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio', 'CNAE'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
     'cups', 'medida', 'fecha'
@@ -16,6 +16,10 @@ def adaptar_datos_contrato(data):
             raise KeyError("Clave requerida {} no encontrada!".format(key))
     if len(str(data['municipio'])) != 3:
         data['municipio'] = str(data['municipio'])[-3:]
+    if not data['CNAE']:
+        data.update({'CNAE': ""})
+    else:
+        data.update({'CNAE': str(data['CNAE']).zfill(4)})
     data.update({
         'comercializadora': str(data['comercializadora'].zfill(4)),
         'distribuidora': str(data['distribuidora'].zfill(4)),

@@ -18,6 +18,7 @@ def validar_contrato(data):
     validar_tipo_punto(data['tipoPunto'])
     validar_control_potencia(data['modoControlPotencia'])
     validar_nif(data['nif'])
+    validar_cnae(data['CNAE'])
     if 'potenciasContratadas' in data:
         validar_potencias_contratadas(data['potenciasContratadas'])
 
@@ -73,6 +74,10 @@ def validar_potencias_contratadas(potencias_contratadas):
     for pot in potencias_contratadas:
         if not isinstance(pot, float):
             raise Exception("Las potencias contratadas deben enviarse en kWh y en decimales")
+
+def validar_cnae(cnae):
+    if cnae and len(cnae) != 4:
+        raise Exception("Longitud CNAE {} incorrecta".format(cnae))
 
 def read_provincias_municipios():
     import csv

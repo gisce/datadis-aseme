@@ -80,6 +80,7 @@ class DatadisWebserviceController(object):
             "tipoPunto": "",
             "modoControlPotencia": "",
             "fechaInicioContrato": "",
+            "CNAE": "",
             "cups": "",
             "distribuidora": "",
             "codigoPostal": "",
