@@ -1,6 +1,4 @@
 {
   "cups": "",
-  "registros": [{
-    "fecha": "", "hora": "", "medida": 0, "periodo": 1
-  }]
+  "registros": []
 }

@@ -140,20 +140,31 @@ class DatadisWebserviceController(object):
         """Publicar maximetros al sistema DATADIS.
         Enviar un diccionario con las siguiente estructura:
         data: {
-            "cups": CON 22 CARACTERES,
-            "fecha": AAAA-MM-DD HH:MM, si no se especifica la hora se utilizara 00:00,
-            "medida": kWh,
+            "cups": CON 22 CARACTERES:
+            [
+                {
+                    "fecha": AAAA-MM-DD HH:MM, si no se especifica la hora se utilizara 00:00,
+                    "medida": kWh,
+                    "periodo": 1, 2, 3, 4, 5 o 6
+                }
+            ]
         }
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         with open(self.templates + 'maximaspotencia.json') as json_template:
             template = json.load(json_template)
-        data = adaptar_maximas_potencia(data)
-        template['cups'] = data['cups']
-        template['registros'][0]['fecha'] = data['fecha']
-        template['registros'][0]['hora'] = data['hora']
-        template['registros'][0]['medida'] = data['medida']
-        template['registros'][0]['periodo'] = data['periodo']
+        cups = data.keys()[0]
+        template['cups'] = cups
+        for maximeter in data[cups]:
+            maximeter = adaptar_maximas_potencia(maximeter)
+            template['registros'].append(
+                {
+                    'fecha': maximeter['fecha'],
+                    'hora': maximeter['hora'],
+                    'medida': maximeter['medida'],
+                    'periodo': maximeter['periodo']
+                }
+            )
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=template)
         if r.status_code == 200:
             return r.json()

@@ -7,7 +7,7 @@ REQUIRED_CONTRATO_KEYS = [
     'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio', 'CNAE'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
-    'cups', 'medida', 'fecha', 'periodo'
+    'medida', 'fecha', 'periodo'
 ]
 
 def adaptar_datos_contrato(data):
