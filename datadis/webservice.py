@@ -153,6 +153,7 @@ class DatadisWebserviceController(object):
         template['registros'][0]['fecha'] = data['fecha']
         template['registros'][0]['hora'] = data['hora']
         template['registros'][0]['medida'] = data['medida']
+        template['registros'][0]['periodo'] = data['periodo']
         r = requests.post(self.url_maximas_potencia, headers=HEADER, json=template)
         if r.status_code == 200:
             return r.json()
