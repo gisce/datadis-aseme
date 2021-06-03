@@ -7,7 +7,7 @@ REQUIRED_CONTRATO_KEYS = [
     'fechaInicioContrato', 'nif', 'nombre', 'cups', 'distribuidora', 'codigoPostal', 'provincia', 'municipio', 'CNAE'
 ]
 REQUIRED_MAXIMAS_POTENCIA_KEYS = [
-    'cups', 'medida', 'fecha'
+    'medida', 'fecha', 'periodo'
 ]
 
 def adaptar_datos_contrato(data):
@@ -32,6 +32,16 @@ def adaptar_datos_contrato(data):
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
     })
+    if 'NT' not in data['tensionConexion']:
+        data['tensionConexion'] = 'NT0'
+        if '6.1T' in data['tarifaAcceso']:
+            data['tensionConexion'] = 'NT1'
+        elif '6.2T' in data['tarifaAcceso']:
+            data['tensionConexion'] = 'NT2'
+        elif '6.3T' in data['tarifaAcceso']:
+            data['tensionConexion'] = 'NT3'
+        elif '6.4T' in data['tarifaAcceso']:
+            data['tensionConexion'] = 'NT4'
     if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
         data.update({'modoControlPotencia': control_potencia})
@@ -73,7 +83,10 @@ def adaptar_maximas_potencia(data):
     hora = ts.strftime(hour_mask)
     medida = "%.3f" % round(data['medida'], 3)
     medida = float(medida)
-    data.update({'medida': medida, 'fecha': fecha, 'hora': hora})
+    periodo = int(data['periodo'])
+    if periodo not in [1, 2, 3, 4, 5, 6]:
+        raise Exception("Periodo {} incorrecto. Valores permitidos 1, 2, 3, 4, 5, 6".format(periodo))
+    data.update({'medida': medida, 'fecha': fecha, 'hora': hora, 'periodo': periodo})
     return data
 
 def adaptar_estado(data):
