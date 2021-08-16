@@ -32,16 +32,6 @@ def adaptar_datos_contrato(data):
         'tipoPunto': int(data['tipoPunto']),
         'nif': str(data['nif']).replace('ES', '')
     })
-    if 'NT' not in data['tensionConexion']:
-        data['tensionConexion'] = 'NT0'
-        if '6.1T' in data['tarifaAcceso']:
-            data['tensionConexion'] = 'NT1'
-        elif '6.2T' in data['tarifaAcceso']:
-            data['tensionConexion'] = 'NT2'
-        elif '6.3T' in data['tarifaAcceso']:
-            data['tensionConexion'] = 'NT3'
-        elif '6.4T' in data['tarifaAcceso']:
-            data['tensionConexion'] = 'NT4'
     if not isinstance(data['modoControlPotencia'], int):
         control_potencia = 1 if 'max' in data['modoControlPotencia'] else 2
         data.update({'modoControlPotencia': control_potencia})

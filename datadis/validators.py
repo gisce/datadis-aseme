@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import path
 
-CODIGOS_TARIFA_TD = ['2.0TD', '3.0TD', '6.1TD', '6.2TD', '6.3TD', '6.4TD', '3.0TDVE', '6.1TDVE', '2.0TDA', '3.0TDA', '6.1TDA', '6.2TDA', '6.3TDA', '6.4TDA']
-CODIGOS_TENSION_TD = ['NT0', 'NT1', 'NT2', 'NT3', 'NT4']
-CODIGOS_TARIFA = ['30', '31', '62', '63', '64', '65', '21', '2A', '6A']
+CODIGOS_TARIFA = ['30', '31', '62', '63', '64', '65', '21', '2A', '6A', '2T', '3T', '3V', '6V']
 CODIGOS_TENSION = ['E0', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6']
 CODIGOS_DH = ['G0', 'E3', 'E2', 'E1']
 
@@ -41,15 +39,13 @@ def validar_cups(cups):
 def validar_tension(tension):
     if not isinstance(tension, str):
         raise TypeError("Tension {} incorrecta".format(tension))
-    TENSIONES_COMPATIBLES = CODIGOS_TENSION_TD + CODIGOS_TENSION
-    if tension.upper() not in TENSIONES_COMPATIBLES:
+    if tension.upper() not in CODIGOS_TENSION:
         raise Exception("Codigo tension {} no catalogada en las tablas de tension".format(tension))
 
 def validar_tarifa(tarifa):
     if not isinstance(tarifa, str):
         raise TypeError("Tarifa {} incorrecta".format(tarifa))
-    TARIFAS_COMPATIBLES = CODIGOS_TARIFA_TD + CODIGOS_TARIFA
-    if tarifa.upper() not in TARIFAS_COMPATIBLES :
+    if tarifa.upper() not in CODIGOS_TARIFA:
         raise Exception("Codigo tarifa {} no catalogada en las tablas de tarifa".format(tarifa))
 
 def validar_dh(dh):
