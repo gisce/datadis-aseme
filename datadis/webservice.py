@@ -46,6 +46,10 @@ class DatadisWebserviceController(object):
     def url_estado(self):
         return BASE_URL + '/estado/{timestamp}/{guid}'
 
+    @property
+    def url_autoconsumo(self):
+        return BASE_URL + '/autoconsumo'
+
     def autenticar(self, user, password):
         """Autenticarse en el sistema DATADIS.
         Enviar un diccionario con las claves requeridas indicadas a continuacion
@@ -206,3 +210,34 @@ class DatadisWebserviceController(object):
             raise Exception("Error en el formato de datos de la peticion: \n{}".format(r.content))
         else:
             raise Exception("No se ha podido consultar el estado de la peticion: {}".format(r.status_code))
+
+    def autoconsumo(self, data):
+        """Publicar autoconsumo al sistema DATADIS.
+        Enviar un diccionario con las claves requeridas indicadas a continuacion
+        data: {
+            "cau": "",
+            "tipoAutoConsumo": "",
+            "seccion": "",
+            "subseccion": "",
+            "potenciaInstaladaGeneracion": "",
+        }
+        return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
+        """
+        if True:
+            data = adaptar_datos_autoconsumo(data)
+            validar_autoconsumo(data)
+
+            with open(self.templates + 'autoconsumo.json') as json_template:
+                template = json.load(json_template)
+            for key in data.keys():
+                if key in template:
+                    template.update({key: data[key]})
+            r = requests.post(self.url_autoconsumo, headers=HEADER, json=template)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 202:
+                return r.json()
+            elif r.status_code == 422:
+                raise Exception("No se ha podido publicar el autoconsumo: \n{}".format(r.content))
+            else:
+                raise Exception("No se ha podido publicar el autoconsumo {}".format(r.status_code))

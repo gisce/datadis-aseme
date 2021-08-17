@@ -83,3 +83,6 @@ def adaptar_estado(data):
     if not isinstance(data['timestamp'], int):
         data['timestamp'] = int(data['timestamp'])
     return data
+
+def adaptar_autoconsumo(data):
+    pass
