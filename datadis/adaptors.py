@@ -11,7 +11,7 @@ REQUIRED_MAXIMAS_POTENCIA_KEYS = [
 ]
 
 REQUIRED_AUTOCONSUMO_KEYS = [
-    'cau', 'tipoAutoConsumo', 'Seccion', 'Subseccion'
+    'cau', 'tipoAutoConsumo', 'seccion', 'subseccion'
 ]
 
 def adaptar_contrato(data):
@@ -65,10 +65,10 @@ def adaptar_maximas_potencia(data):
     date_mask = "%Y-%m-%d"
     try:
         ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask + ":%S")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         try:
             ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
-        except ValueError, TypeError:
+        except (ValueError, TypeError):
             try:
                 ts = datetime.strptime(data['fecha'], date_mask)
             except:
