@@ -3,8 +3,8 @@ import requests
 import logging
 import json
 from os import path
-from datadis.validators import validar_contrato
-from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia, adaptar_estado
+from datadis.validators import validar_contrato, validar_autoconsumo
+from datadis.adaptors import adaptar_contrato, adaptar_maximas_potencia, adaptar_estado, adaptar_autoconsumo
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
@@ -96,7 +96,7 @@ class DatadisWebserviceController(object):
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         if method.upper() == 'POST':
-            data = adaptar_datos_contrato(data)
+            data = adaptar_contrato(data)
             validar_contrato(data)
 
             with open(self.templates + 'contrato.json') as json_template:
@@ -215,16 +215,16 @@ class DatadisWebserviceController(object):
         """Publicar autoconsumo al sistema DATADIS.
         Enviar un diccionario con las claves requeridas indicadas a continuacion
         data: {
-            "cau": "",
+            "cau": "CAU",
             "tipoAutoConsumo": "",
-            "seccion": "",
+            "seccion": "1 o 2",
             "subseccion": "",
             "potenciaInstaladaGeneracion": "",
         }
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         if True:
-            data = adaptar_datos_autoconsumo(data)
+            data = adaptar_autoconsumo(data)
             validar_autoconsumo(data)
 
             with open(self.templates + 'autoconsumo.json') as json_template:

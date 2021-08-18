@@ -23,6 +23,14 @@ def validar_contrato(data):
     if 'potenciasContratadas' in data:
         validar_potencias_contratadas(data['potenciasContratadas'])
 
+def validar_autoconsumo(data):
+    if not isinstance(data, dict):
+        raise Exception("El formato de datos debe ser un diccionario")
+
+    validar_cau(data['cau'])
+    validar_tipo_autoconsumo(data['cau'])
+    validar_seccion(data['seccion'])
+
 def validar_provincia(provincia):
     provincias, municipios = read_provincias_municipios()
     if provincia not in provincias:
@@ -88,7 +96,13 @@ def validar_tipo_autoconsumo(tipo_autoconsumo):
     if not isinstance(tipo_autoconsumo, str):
         raise TypeError("Tipo autoconsumo {} incorrecto, debe ser un string".format(tipo_autoconsumo))
     if tipo_autoconsumo.upper() not in CODIGOS_AUTOCONSUMO:
-        raise Exception("Tipo autoconsumo {} no catalogado en las tablas -> {}".format(tipo_autoconsumo, CODIGOS_AUTOCONSUMO))
+        raise Exception(
+            "Tipo autoconsumo {} no catalogado en las tablas -> {}".format(tipo_autoconsumo, CODIGOS_AUTOCONSUMO))
+
+def validar_seccion(seccion):
+    if not int(seccion) in (1, 2):
+        raise Exception(
+            "Seccion incorrecta {}: Solo se permite seccion 1 Sin excedentes o 2 Con excedentes".format(seccion))
 
 def read_provincias_municipios():
     import csv

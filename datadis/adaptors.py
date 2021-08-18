@@ -10,7 +10,11 @@ REQUIRED_MAXIMAS_POTENCIA_KEYS = [
     'medida', 'fecha', 'periodo'
 ]
 
-def adaptar_datos_contrato(data):
+REQUIRED_AUTOCONSUMO_KEYS = [
+    'cau', 'tipoAutoConsumo', 'Seccion', 'Subseccion'
+]
+
+def adaptar_contrato(data):
     for key in REQUIRED_CONTRATO_KEYS:
         if key not in data:
             raise KeyError("Clave requerida {} no encontrada!".format(key))
@@ -85,4 +89,13 @@ def adaptar_estado(data):
     return data
 
 def adaptar_autoconsumo(data):
-    pass
+    for key in REQUIRED_MAXIMAS_POTENCIA_KEYS:
+        if key not in data:
+            raise KeyError("Clave requerida {} no encontrada!".format(key))
+    data.update({
+        'tipoAutoConsumo': str(data['tipoAutoConsumo']),
+        'seccion': str(data['seccion']),
+        'subseccion': str(data['subseccion'].lower()),
+        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion'])
+    })
+    return data
