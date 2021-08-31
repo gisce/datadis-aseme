@@ -28,7 +28,7 @@ def validar_autoconsumo(data):
         raise Exception("El formato de datos debe ser un diccionario")
 
     validar_cau(data['cau'])
-    validar_tipo_autoconsumo(data['cau'])
+    validar_tipo_autoconsumo(data['tipoAutoConsumo'])
     validar_seccion(data['seccion'])
 
 def validar_provincia(provincia):
