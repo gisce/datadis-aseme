@@ -90,7 +90,7 @@ def validar_cnae(cnae):
 
 def validar_cau(cau):
     if len(cau) != 26:
-        raise Exception('El cau debe tener 26 caracteres')
+        raise Exception('El CAU debe tener 26 caracteres')
 
 def validar_tipo_autoconsumo(tipo_autoconsumo):
     if not isinstance(tipo_autoconsumo, str):

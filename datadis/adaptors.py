@@ -89,7 +89,7 @@ def adaptar_estado(data):
     return data
 
 def adaptar_autoconsumo(data):
-    for key in REQUIRED_MAXIMAS_POTENCIA_KEYS:
+    for key in REQUIRED_AUTOCONSUMO_KEYS:
         if key not in data:
             raise KeyError("Clave requerida {} no encontrada!".format(key))
     data.update({
