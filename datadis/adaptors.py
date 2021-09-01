@@ -54,6 +54,8 @@ def adaptar_contrato(data):
             for i, pot in enumerate(potencias):
                 potencias[i] = float(potencias[i])
             data['potenciasContratadas'] = potencias
+    if 'cau' in data:
+        data.update({'coeficienteReparto': float(data['coeficienteReparto'])})
     return data
 
 def adaptar_maximas_potencia(data):

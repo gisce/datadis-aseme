@@ -22,6 +22,9 @@ def validar_contrato(data):
     validar_cnae(data['CNAE'])
     if 'potenciasContratadas' in data:
         validar_potencias_contratadas(data['potenciasContratadas'])
+    if 'cau' in data:
+        validar_cau(data['cau'])
+        validar_coeficiente_reparto(data['coeficienteReparto'])
 
 def validar_autoconsumo(data):
     if not isinstance(data, dict):
@@ -103,6 +106,10 @@ def validar_seccion(seccion):
     if not int(seccion) in (1, 2):
         raise Exception(
             "Seccion incorrecta {}: Solo se permite seccion 1 Sin excedentes o 2 Con excedentes".format(seccion))
+
+def validar_coeficiente_reparto(coeficiente_reparto):
+    if not isinstance(coeficiente_reparto, (int, float)):
+        raise TypeError("El formato de Coeficiente de reparto {} es incorrecto.".format(coeficiente_reparto))
 
 def read_provincias_municipios():
     import csv
