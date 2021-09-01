@@ -3,8 +3,8 @@ import requests
 import logging
 import json
 from os import path
-from datadis.validators import validar_contrato
-from datadis.adaptors import adaptar_datos_contrato, adaptar_maximas_potencia, adaptar_estado
+from datadis.validators import validar_contrato, validar_autoconsumo
+from datadis.adaptors import adaptar_contrato, adaptar_maximas_potencia, adaptar_estado, adaptar_autoconsumo
 from datetime import datetime
 
 BASE_URL = "https://apihsdistribuidoras.asemeservicios.com"
@@ -45,6 +45,10 @@ class DatadisWebserviceController(object):
     @property
     def url_estado(self):
         return BASE_URL + '/estado/{timestamp}/{guid}'
+
+    @property
+    def url_autoconsumo(self):
+        return BASE_URL + '/autoconsumo'
 
     def autenticar(self, user, password):
         """Autenticarse en el sistema DATADIS.
@@ -92,7 +96,7 @@ class DatadisWebserviceController(object):
         return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
         """
         if method.upper() == 'POST':
-            data = adaptar_datos_contrato(data)
+            data = adaptar_contrato(data)
             validar_contrato(data)
 
             with open(self.templates + 'contrato.json') as json_template:
@@ -106,6 +110,12 @@ class DatadisWebserviceController(object):
                     template['titular'].update({key: data[key]})
                 if key == 'potenciasContratadas':
                     template['potenciasContratadas'] = data[key]
+                if key in ('cau', 'coeficienteReparto'):
+                    node_key = 'autoConsumo'
+                    if node_key not in template:
+                        template[node_key] = {key: data[key]}
+                    else:
+                        template[node_key].update({key: data[key]})
             r = requests.post(self.url_contrato, headers=HEADER, json=template)
             if r.status_code == 200:
                 return r.json()
@@ -206,3 +216,34 @@ class DatadisWebserviceController(object):
             raise Exception("Error en el formato de datos de la peticion: \n{}".format(r.content))
         else:
             raise Exception("No se ha podido consultar el estado de la peticion: {}".format(r.status_code))
+
+    def autoconsumo(self, data):
+        """Publicar autoconsumo al sistema DATADIS.
+        Enviar un diccionario con las claves requeridas indicadas a continuacion
+        data: {
+            "cau": "CAU",
+            "tipoAutoConsumo": "",
+            "seccion": "1 o 2",
+            "subseccion": "",
+            "potenciaInstaladaGeneracion": "",
+        }
+        return: dict {'guid': identificador de la peticion, 'timestamp': marca de tiempo}
+        """
+        if True:
+            data = adaptar_autoconsumo(data)
+            validar_autoconsumo(data)
+
+            with open(self.templates + 'autoconsumo.json') as json_template:
+                template = json.load(json_template)
+            for key in data.keys():
+                if key in template:
+                    template.update({key: data[key]})
+            r = requests.post(self.url_autoconsumo, headers=HEADER, json=template)
+            if r.status_code == 200:
+                return r.json()
+            elif r.status_code == 202:
+                return r.json()
+            elif r.status_code == 422:
+                raise Exception("No se ha podido publicar el autoconsumo: \n{}".format(r.content))
+            else:
+                raise Exception("No se ha podido publicar el autoconsumo {}".format(r.status_code))

@@ -10,7 +10,11 @@ REQUIRED_MAXIMAS_POTENCIA_KEYS = [
     'medida', 'fecha', 'periodo'
 ]
 
-def adaptar_datos_contrato(data):
+REQUIRED_AUTOCONSUMO_KEYS = [
+    'cau', 'tipoAutoConsumo', 'seccion', 'subseccion'
+]
+
+def adaptar_contrato(data):
     for key in REQUIRED_CONTRATO_KEYS:
         if key not in data:
             raise KeyError("Clave requerida {} no encontrada!".format(key))
@@ -50,6 +54,8 @@ def adaptar_datos_contrato(data):
             for i, pot in enumerate(potencias):
                 potencias[i] = float(potencias[i])
             data['potenciasContratadas'] = potencias
+    if 'cau' in data:
+        data.update({'coeficienteReparto': float(data['coeficienteReparto'])})
     return data
 
 def adaptar_maximas_potencia(data):
@@ -61,10 +67,10 @@ def adaptar_maximas_potencia(data):
     date_mask = "%Y-%m-%d"
     try:
         ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask + ":%S")
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         try:
             ts = datetime.strptime(data['fecha'], date_mask + ' ' + hour_mask)
-        except ValueError, TypeError:
+        except (ValueError, TypeError):
             try:
                 ts = datetime.strptime(data['fecha'], date_mask)
             except:
@@ -82,4 +88,16 @@ def adaptar_maximas_potencia(data):
 def adaptar_estado(data):
     if not isinstance(data['timestamp'], int):
         data['timestamp'] = int(data['timestamp'])
+    return data
+
+def adaptar_autoconsumo(data):
+    for key in REQUIRED_AUTOCONSUMO_KEYS:
+        if key not in data:
+            raise KeyError("Clave requerida {} no encontrada!".format(key))
+    data.update({
+        'tipoAutoConsumo': str(data['tipoAutoConsumo']),
+        'seccion': str(data['seccion']),
+        'subseccion': str(data['subseccion'].lower()),
+        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion'])
+    })
     return data

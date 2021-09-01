@@ -4,6 +4,7 @@ from os import path
 CODIGOS_TARIFA = ['30', '31', '62', '63', '64', '65', '21', '2A', '6A', '2T', '3T', '3V', '6V']
 CODIGOS_TENSION = ['E0', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6']
 CODIGOS_DH = ['G0', 'E3', 'E2', 'E1']
+CODIGOS_AUTOCONSUMO = ['31', '32', '33', '41', '42', '51', '52', '53', '54', '55', '56', '61', '62', '63', '64', '71', '72', '73', '74']
 
 def validar_contrato(data):
     if not isinstance(data, dict):
@@ -21,6 +22,17 @@ def validar_contrato(data):
     validar_cnae(data['CNAE'])
     if 'potenciasContratadas' in data:
         validar_potencias_contratadas(data['potenciasContratadas'])
+    if 'cau' in data:
+        validar_cau(data['cau'])
+        validar_coeficiente_reparto(data['coeficienteReparto'])
+
+def validar_autoconsumo(data):
+    if not isinstance(data, dict):
+        raise Exception("El formato de datos debe ser un diccionario")
+
+    validar_cau(data['cau'])
+    validar_tipo_autoconsumo(data['tipoAutoConsumo'])
+    validar_seccion(data['seccion'])
 
 def validar_provincia(provincia):
     provincias, municipios = read_provincias_municipios()
@@ -78,6 +90,26 @@ def validar_potencias_contratadas(potencias_contratadas):
 def validar_cnae(cnae):
     if cnae and len(cnae) != 4:
         raise Exception("Longitud CNAE {} incorrecta".format(cnae))
+
+def validar_cau(cau):
+    if len(cau) != 26:
+        raise Exception('El CAU debe tener 26 caracteres')
+
+def validar_tipo_autoconsumo(tipo_autoconsumo):
+    if not isinstance(tipo_autoconsumo, str):
+        raise TypeError("Tipo autoconsumo {} incorrecto, debe ser un string".format(tipo_autoconsumo))
+    if tipo_autoconsumo.upper() not in CODIGOS_AUTOCONSUMO:
+        raise Exception(
+            "Tipo autoconsumo {} no catalogado en las tablas -> {}".format(tipo_autoconsumo, CODIGOS_AUTOCONSUMO))
+
+def validar_seccion(seccion):
+    if not int(seccion) in (1, 2):
+        raise Exception(
+            "Seccion incorrecta {}: Solo se permite seccion 1 Sin excedentes o 2 Con excedentes".format(seccion))
+
+def validar_coeficiente_reparto(coeficiente_reparto):
+    if not isinstance(coeficiente_reparto, (int, float)):
+        raise TypeError("El formato de Coeficiente de reparto {} es incorrecto.".format(coeficiente_reparto))
 
 def read_provincias_municipios():
     import csv
