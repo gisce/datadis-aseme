@@ -41,3 +41,9 @@ Publicar contrato al sistema DATADIS.
 >>>
 respuesta = controller.contrato(data)
 ```
+
+### Informaciones de:
+
+- Contrato
+- Máximas potencia
+- AUtoconsumo
