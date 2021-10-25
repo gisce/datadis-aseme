@@ -9,12 +9,12 @@ with open('requirements.txt', 'r') as f:
 setup(
     name='datadis',
     version=__version__,
-    description="Herramienta gestión DATADIS",
+    description="Herramienta gestión API ASEME DATADIS",
     provides=['datadis'],
     packages=find_packages(),
     install_requires=requirements,
     license='BSD 3-Clause License',
     author=__author__,
     author_email='devel@gisce.net',
-    url = 'https://github.com/gisce/datadis',
+    url = 'https://github.com/gisce/datadis-aseme',
 )
