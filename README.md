@@ -2,12 +2,13 @@
 - Publicación de datos de distribuidora al sistema DATADIS
 - Gestión de peticiones
 
-### Instalación
-```bash
-git clone https://github.com/gisce/datadis.git
-cd datadis
-pip install -e .
-```
+
+### Informaciones de:
+
+- Contrato
+- Máximas potencia
+- AUtoconsumo
+
 
 ### Fácil de utilizar
 
@@ -42,8 +43,4 @@ Publicar contrato al sistema DATADIS.
 respuesta = controller.contrato(data)
 ```
 
-### Informaciones de:
 
-- Contrato
-- Máximas potencia
-- AUtoconsumo
