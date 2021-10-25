@@ -6,10 +6,15 @@ from datadis import __version__, __author__
 with open('requirements.txt', 'r') as f:
     requirements = f.readlines()
 
+with open("README.md", "r") as f:
+    long_description = f.read()
+
 setup(
-    name='datadis',
+    name='datadis-aseme',
     version=__version__,
     description="Herramienta gestión API ASEME DATADIS",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     provides=['datadis'],
     packages=find_packages(),
     install_requires=requirements,
