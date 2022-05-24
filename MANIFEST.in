@@ -1,1 +1,4 @@
 include requirements.txt
+include datadis/data/*.csv
+include datadis/templates/*.json
+include datadis/templates/*.error
