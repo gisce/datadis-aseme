@@ -3,6 +3,8 @@
 from setuptools import setup, find_packages
 from datadis import __version__, __author__
 
+PACKAGES_DATA = {'datadis': ['data/*.csv', 'templates/*.json', 'templates/*.error']}
+
 with open('requirements.txt', 'r') as f:
     requirements = f.readlines()
 
@@ -17,6 +19,7 @@ setup(
     long_description_content_type="text/markdown",
     provides=['datadis'],
     packages=find_packages(),
+    package_data=PACKAGES_DATA,
     install_requires=requirements,
     license='BSD 3-Clause License',
     author=__author__,
