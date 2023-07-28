@@ -99,6 +99,7 @@ def adaptar_autoconsumo(data):
         'tipoAutoConsumo': str(data['tipoAutoConsumo']),
         'seccion': str(data['seccion']),
         'subseccion': str(data['subseccion'].lower()),
-        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion'])
+        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion']),
+        'Tecnologia': str(data['Tecnologia']),
     })
     return data

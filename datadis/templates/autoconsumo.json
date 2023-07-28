@@ -3,5 +3,9 @@
     "tipoAutoConsumo": "",
     "seccion": "",
     "subseccion": "",
-    "potenciaInstaladaGeneracion": ""
+    "potenciaInstaladaGeneracion": "",
+    "Colectivo": "",
+    "InstalacionProximaRed": "",
+    "NoDisponeUnicoContratoSuministro": "",
+    "Tecnologia": ""
 }
