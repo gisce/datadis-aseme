@@ -11,7 +11,8 @@ REQUIRED_MAXIMAS_POTENCIA_KEYS = [
 ]
 
 REQUIRED_AUTOCONSUMO_KEYS = [
-    'cau', 'tipoAutoConsumo', 'seccion', 'subseccion'
+    'cau', 'tipoAutoConsumo', 'seccion', 'subseccion',
+    'Tecnologia', 'Colectivo', 'InstalacionProximaRed', 'NoDisponeUnicoContratoSuministro'
 ]
 
 def adaptar_contrato(data):
@@ -98,6 +99,7 @@ def adaptar_autoconsumo(data):
         'tipoAutoConsumo': str(data['tipoAutoConsumo']),
         'seccion': str(data['seccion']),
         'subseccion': str(data['subseccion'].lower()),
-        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion'])
+        'potenciaInstaladaGeneracion': float(data['potenciaInstaladaGeneracion']),
+        'Tecnologia': str(data['Tecnologia']),
     })
     return data
