@@ -5,6 +5,7 @@ CODIGOS_TARIFA = ['30', '31', '62', '63', '64', '65', '21', '2A', '6A', '2T', '3
 CODIGOS_TENSION = ['E0', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6']
 CODIGOS_DH = ['G0', 'E3', 'E2', 'E1']
 CODIGOS_AUTOCONSUMO = ['31', '32', '33', '41', '42', '51', '52', '53', '54', '55', '56', '61', '62', '63', '64', '71', '72', '73', '74']
+CODIGOS_TECNOLOGIA = ['1', '2', '3', '4', '5', '6']
 
 def validar_contrato(data):
     if not isinstance(data, dict):
@@ -33,6 +34,10 @@ def validar_autoconsumo(data):
     validar_cau(data['cau'])
     validar_tipo_autoconsumo(data['tipoAutoConsumo'])
     validar_seccion(data['seccion'])
+    validar_instalacion_proxima_a_red(data['InstalacionProximaRed'])
+    validar_tecnologia(data['Tecnologia'])
+    validar_colectivo(data['Colectivo'])
+    validar_no_dispone_unico_contrato_suministro(data['NoDisponeUnicoContratoSuministro'])
 
 def validar_provincia(provincia):
     provincias, municipios = read_provincias_municipios()
@@ -110,6 +115,26 @@ def validar_seccion(seccion):
 def validar_coeficiente_reparto(coeficiente_reparto):
     if not isinstance(coeficiente_reparto, (int, float)):
         raise TypeError("El formato de Coeficiente de reparto {} es incorrecto.".format(coeficiente_reparto))
+
+def validar_instalacion_proxima_a_red(instalacion_proxima_a_red):
+    if not isinstance(instalacion_proxima_a_red, bool):
+        raise TypeError("El formato de InstalacionProximaRed {} es incorrecto.".format(instalacion_proxima_a_red))
+
+def validar_tecnologia(tecnologia):
+    if not isinstance(tecnologia, str):
+        raise TypeError("El formato de Tecnologia {} es incorrecto.".format(tecnologia))
+    if tecnologia not in CODIGOS_TECNOLOGIA:
+        raise TypeError("Tecnologia {} no catalogada en las tablas -> {}".format(tecnologia, CODIGOS_TECNOLOGIA))
+
+def validar_colectivo(colectivo):
+    if not isinstance(colectivo, bool):
+        raise TypeError("El formato de Colectivo {} es incorrecto.".format(colectivo))
+
+def validar_no_dispone_unico_contrato_suministro(no_dispone_unico_contrato_suministro):
+    if not isinstance(no_dispone_unico_contrato_suministro, bool):
+        raise TypeError("El formato de NoDisponeUnicoContratoSuministro {} es incorrecto.".format(
+            no_dispone_unico_contrato_suministro)
+        )
 
 def read_provincias_municipios():
     import csv
